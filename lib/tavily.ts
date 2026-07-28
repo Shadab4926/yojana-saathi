@@ -38,7 +38,6 @@ export function buildGovQuery(q: SchemeQuery): string {
  * and exam-notification domains.
  */
 export function buildJobQuery(q: JobQuery): string {
-  const year = new Date().getFullYear();
   const stateSlug = q.state.toLowerCase().replace(/\s+/g, "");
 
   const siteScope = [
@@ -53,11 +52,11 @@ export function buildJobQuery(q: JobQuery): string {
 
   const parts = [
     `(${siteScope})`,
-    "latest recruitment notification vacancy",
+    `recruitment notification vacancy ${new Date().getFullYear()}`,
+    "\"last date to apply\" OR \"applications open\" OR \"apply online\"",
     q.qualification,
     q.category,
-    `in ${q.state}`,
-    `${year}`
+    `in ${q.state}`
   ].filter(Boolean);
 
   return parts.join(" ");
