@@ -12,35 +12,11 @@ import {
   AlertTriangle
 } from "lucide-react";
 import { JobResult } from "@/lib/types";
+import { daysLeft } from "@/lib/dates";
 
 interface JobCardProps {
   job: JobResult;
   language: string;
-}
-
-// Best-effort parse of free-text dates like "15 August 2026" or "15/08/2026".
-// Returns null (no countdown shown) rather than guessing on ambiguous formats
-// — a wrong "days left" number is worse than none for something deadline-critical.
-function tryParseDate(text: string): Date | null {
-  if (!text) return null;
-  const direct = new Date(text);
-  if (!isNaN(direct.getTime())) return direct;
-
-  const dmy = text.match(/(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})/);
-  if (dmy) {
-    const [, d, m, y] = dmy;
-    const year = y.length === 2 ? `20${y}` : y;
-    const parsed = new Date(`${year}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`);
-    if (!isNaN(parsed.getTime())) return parsed;
-  }
-  return null;
-}
-
-function daysLeft(dateText: string): number | null {
-  const date = tryParseDate(dateText);
-  if (!date) return null;
-  const diffMs = date.getTime() - Date.now();
-  return Math.ceil(diffMs / (1000 * 60 * 60 * 24));
 }
 
 export default function JobCard({ job, language }: JobCardProps) {
