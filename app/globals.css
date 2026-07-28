@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #FAF6EC;
+  background-image:
+    linear-gradient(rgba(30,42,74,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30,42,74,0.025) 1px, transparent 1px);
+  background-size: 28px 28px;
+  color: #1B1D22;
+}
+
+.gazette-rule {
+  height: 6px;
+  background: repeating-linear-gradient(
+    90deg,
+    #1E2A4A 0px,
+    #1E2A4A 10px,
+    #E8912D 10px,
+    #E8912D 14px,
+    #1E2A4A 14px,
+    #1E2A4A 24px
+  );
+  opacity: 0.9;
+}
+
+:focus-visible {
+  outline: 3px solid #E8912D;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
