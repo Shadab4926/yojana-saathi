@@ -14,7 +14,7 @@
     "react-dom": "^18.3.1",
     "groq-sdk": "^0.7.0",
     "@google/generative-ai": "^0.21.0",
-    "lucide-react": "^0.446.0"
+    "lucide-react": "^0.446.0",
     "pdf-parse": "^1.1.1"
   },
   "devDependencies": {
