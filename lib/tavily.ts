@@ -102,13 +102,23 @@ async function searchTavily(
       api_key: apiKey,
       query,
       search_depth: "advanced",
-      max_results: 8,
+      // Fetch more than we need pre-filter, since strictly enforcing official
+      // domains below will drop some results Tavily returns from
+      // aggregator/news sites.
+      max_results: 12,
       include_answer: false,
       // "text" pulls the full cleaned page content, not just a short snippet —
       // short snippets were the reason eligibility/application-process fields
       // kept coming back as "See official source for details."
       include_raw_content: "text",
-      // Nudge Tavily toward official sources; it still free-searches the open web
+      // NOTE: this only biases Tavily's ranking, it does NOT strictly
+      // restrict results to these domains — private aggregator sites
+      // (freejobalert.com, careerera.com, etc.) still show up if Tavily
+      // scores them as relevant. We enforce the real restriction ourselves
+      // below, because a "government scheme/job finder" showing unofficial
+      // third-party summaries — with no real application link, and no
+      // guarantee the info is current or accurate — undermines the entire
+      // point of the app.
       include_domains: includeDomains
     })
   });
@@ -119,7 +129,7 @@ async function searchTavily(
   }
 
   const data = await res.json();
-  const results: TavilySearchResult[] = (data.results || []).map((r: any) => ({
+  const allResults: TavilySearchResult[] = (data.results || []).map((r: any) => ({
     title: r.title,
     url: r.url,
     // Prefer the full raw page text when available; fall back to the short
@@ -129,5 +139,17 @@ async function searchTavily(
     score: r.score ?? 0
   }));
 
-  return results;
+  const officialOnly = allResults.filter((r) => isOfficialDomain(r.url, includeDomains));
+  return officialOnly.slice(0, 8);
+}
+
+function isOfficialDomain(url: string, allowedDomains: string[]): boolean {
+  try {
+    const hostname = new URL(url).hostname.toLowerCase();
+    return allowedDomains.some(
+      (domain) => hostname === domain || hostname.endsWith(`.${domain}`)
+    );
+  } catch {
+    return false;
+  }
 }
