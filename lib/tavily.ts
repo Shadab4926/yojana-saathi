@@ -1,4 +1,5 @@
 import { SchemeQuery, JobQuery, TavilySearchResult } from "./types";
+import { looksLikePdf, extractPdfText } from "./pdf";
 
 const TAVILY_ENDPOINT = "https://api.tavily.com/search";
 
@@ -140,7 +141,28 @@ async function searchTavily(
   }));
 
   const officialOnly = allResults.filter((r) => isOfficialDomain(r.url, includeDomains));
-  return officialOnly.slice(0, 8);
+  const topResults = officialOnly.slice(0, 8);
+
+  // Fill in real content for sources Tavily couldn't extract properly —
+  // this is what fixes cards showing "See official notification for
+  // details" for everything, which almost always traces back to a PDF
+  // notice Tavily returned little or no text for.
+  const MIN_USABLE_CONTENT_CHARS = 300;
+  const withPdfFallback = await Promise.all(
+    topResults.map(async (r) => {
+      const needsFallback =
+        r.content.length < MIN_USABLE_CONTENT_CHARS || looksLikePdf(r.url);
+      if (!needsFallback) return r;
+
+      const pdfText = await extractPdfText(r.url);
+      if (pdfText && pdfText.length > r.content.length) {
+        return { ...r, content: pdfText };
+      }
+      return r;
+    })
+  );
+
+  return withPdfFallback;
 }
 
 function isOfficialDomain(url: string, allowedDomains: string[]): boolean {
