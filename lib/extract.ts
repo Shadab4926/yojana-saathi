@@ -21,10 +21,24 @@ The citizen's context:
 - Income bracket: ${q.incomeBracket || "unspecified"}
 - Age: ${q.age ?? "unspecified"}
 
-From the snippets, extract ONLY schemes that are real and named in the source text.
-Do NOT invent scheme names, amounts, or URLs that are not present or clearly implied
-in the provided content. If a field is not present in the source, use an empty string
-rather than guessing.
+From the snippets, extract ONLY real recruitment notices / exams named in the
+source text. Do NOT invent post names, vacancy counts, dates, or URLs not
+present or clearly implied in the provided content. If a field is not present
+in the source, use an empty string rather than guessing — this is especially
+important for dates and fees, since a wrong date could cause someone to miss
+a real deadline.
+
+IMPORTANT — government vs private: some sources (e.g. state employment
+exchange portals like rojgaarsangam.up.gov.in) list BOTH government and
+private-sector vacancies on the same .gov.in domain. Only include a posting
+if the hiring "organization" is itself a government department, ministry,
+PSU (public sector undertaking), autonomous government body, or similar
+public institution. EXCLUDE any posting where the employer is clearly a
+private company (e.g. names containing "Pvt Ltd", "Limited" as a private
+manufacturer/technology/workforce-solutions firm, or any other non-government
+employer) — even if the page it was found on is an official .gov.in portal.
+When unsure whether an organization is government or private, err on the
+side of excluding it rather than including a false "sarkari naukri."
 
 "officialLink" must be the scheme's OWN application or information portal
 (e.g. its dedicated myscheme.gov.in page, or the sponsoring ministry's scheme
