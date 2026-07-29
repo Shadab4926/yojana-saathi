@@ -47,7 +47,7 @@ Return ONLY a JSON array (no markdown fences, no prose) where each item has exac
   "sourceDomain": string
 }
 
-Return at most 6 schemes, ranked by relevance to the citizen's context above.
+Return at most 8 schemes, ranked by relevance to the citizen's context above.
 If nothing relevant is found, return [].
 `;
 
@@ -115,7 +115,7 @@ function normalizeSchemes(parsed: any): SchemeResult[] {
   const now = new Date().toISOString();
   return parsed
     .filter((s) => s && (s.nameEnglish || s.nameNative))
-    .slice(0, 6)
+    .slice(0, 8)
     .map((s) => ({
       nameNative: s.nameNative || "",
       nameEnglish: s.nameEnglish || "",
@@ -189,7 +189,7 @@ Return ONLY a JSON array (no markdown fences, no prose) where each item has exac
   "sourceDomain": string
 }
 
-Return at most 6 postings, ranked by relevance to the citizen's context above.
+Return at most 8 postings, ranked by relevance to the citizen's context above.
 If nothing relevant is found, return [].
 `;
 
@@ -234,7 +234,7 @@ function normalizeJobs(parsed: any): JobResult[] {
   const now = new Date().toISOString();
   return parsed
     .filter((j) => j && (j.postNameEnglish || j.postNameNative))
-    .slice(0, 6)
+    .slice(0, 8)
     .map((j) => ({
       postNameNative: j.postNameNative || "",
       postNameEnglish: j.postNameEnglish || "",
